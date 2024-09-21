@@ -108,9 +108,10 @@ def parse_side_info(side_info, num_eq, CSI_LEN, EQUALIZER_LEN, HEADER_LEN):
     num_int16_per_trans = num_dma_symbol_per_trans*4 # 64bit per dma symbol
     num_trans = round(len(side_info)/num_int16_per_trans)
     # print(len(side_info), side_info.dtype, num_trans)
-    side_info = side_info.reshape([num_trans, num_int16_per_trans])
+    side_info = np.int64(side_info.reshape([num_trans, num_int16_per_trans]))
     
     timestamp = side_info[:,0] + pow(2,16)*side_info[:,1] + pow(2,32)*side_info[:,2] + pow(2,48)*side_info[:,3]
+
     
     freq_offset = (20e6*np.int16(side_info[:,4])/512)/(2*3.14159265358979323846)
 
