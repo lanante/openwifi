@@ -52,7 +52,7 @@ def parse_iq(iq, iq_len):
     num_int16_per_trans = num_dma_symbol_per_trans*4 # 64bit per dma symbol
     num_trans = round(len(iq)/num_int16_per_trans)
     # print(len(iq), iq.dtype, num_trans)
-    iq = iq.reshape([num_trans, num_int16_per_trans])
+    iq = np.int64(iq.reshape([num_trans, num_int16_per_trans]))
     
     timestamp = iq[:,0] + pow(2,16)*iq[:,1] + pow(2,32)*iq[:,2] + pow(2,48)*iq[:,3]
     iq_capture = np.int16(iq[:,4::4]) + np.int16(iq[:,5::4])*1j
