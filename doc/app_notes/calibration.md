@@ -20,23 +20,24 @@ We use the
 - Power on the SDR board.
 - Connect a computer to the SDR board via Ethernet cable. The computer should have static IP 192.168.10.1. Open a terminal on the computer, and then in the terminal:
   ```
+  ssh root@192.168.10.122
+  # (password: openwifi)
+  cd openwifi
+  ./wgd.sh
+  # (Wait for the script completed)
   cd /root/openwifi/inject_80211
   ./inject_80211 -d 0 -r 0 -t d -e 0 -b 5a -n 99999999 -s 20 -d 1000 sdr0
   ```
 
 - Open another terminal and ssh on the board.
   ```
-  ssh root@192.168.10.122
-  (password: openwifi)
-  cd openwifi
-  ./wgd.sh
-  (Wait for the script completed)
+  
   ./monitor_ch.sh sdr0 11
-  (Monitor on channel 11. You can change 11 to other channel that is busy)
+  # (Monitor on channel 11. You can change 11 to other channel that is busy)
   insmod side_ch.ko iq_len_init=4095
-  (for smaller FPGA (7Z020), iq_len_init should be <4096, like 4095, instead of 8187)
+  # (for smaller FPGA (7Z020), iq_len_init should be <4096, like 4095, instead of 8187)
   ./side_ch_ctl wh11d4094
-  (Above command is needed only when you run with zed, adrv9364z7020, zc702 board)
+  # (Above command is needed only when you run with zed, adrv9364z7020, zc702 board)
    ./side_ch_ctl g
   ```
   You should see on board outputs like:
