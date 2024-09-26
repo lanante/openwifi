@@ -27,8 +27,12 @@ We use the
   # (Wait for the script completed)
   ./monitor_ch.sh sdr0 11
   # (Monitor on channel 11. You can change 11 to other channel that is busy)
+  ./sdrctl dev sdr0 set reg xpu 1 1
+  # (Above unmute the baseband self-receiving to receive openwifi own TX signal/packet)
+  side_ch_ctl wh11d400
+  ./side_ch_ctl wh8d8
   cd /root/openwifi/inject_80211
-  ./inject_80211 -d 0 -r 0 -t d -e 0 -b 5a -n 99999999 -s 20 -d 1000 sdr0
+  ./inject_80211 -d 0 -r 7 -t d -e 0 -b 5a -n 99999999 -s 20 sdr0
   ```
 
 - Open another terminal and ssh on the board.
