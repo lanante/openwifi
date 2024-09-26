@@ -22,7 +22,7 @@ We use the
   ```
   ssh root@192.168.10.122
   # (password: openwifi)
-  cd openwifi
+  cd /root/openwifi
   ./wgd.sh
   # (Wait for the script completed)
   ./monitor_ch.sh sdr0 11
@@ -33,6 +33,7 @@ We use the
 
 - Open another terminal and ssh on the board.
   ```
+  cd /root/openwifi
   insmod side_ch.ko iq_len_init=4095
   # (for smaller FPGA (7Z020), iq_len_init should be <4096, like 4095, instead of 8187)
   ./side_ch_ctl wh11d4094
