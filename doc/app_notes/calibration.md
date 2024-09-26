@@ -25,15 +25,14 @@ We use the
   cd openwifi
   ./wgd.sh
   # (Wait for the script completed)
+  ./monitor_ch.sh sdr0 11
+  # (Monitor on channel 11. You can change 11 to other channel that is busy)
   cd /root/openwifi/inject_80211
   ./inject_80211 -d 0 -r 0 -t d -e 0 -b 5a -n 99999999 -s 20 -d 1000 sdr0
   ```
 
 - Open another terminal and ssh on the board.
   ```
-  
-  ./monitor_ch.sh sdr0 11
-  # (Monitor on channel 11. You can change 11 to other channel that is busy)
   insmod side_ch.ko iq_len_init=4095
   # (for smaller FPGA (7Z020), iq_len_init should be <4096, like 4095, instead of 8187)
   ./side_ch_ctl wh11d4094
