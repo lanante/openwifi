@@ -19,14 +19,13 @@ def rssi_correction_lookup_table(freq_mhz):
 def rssi_half_db_to_rssi_dbm(rssi_hdb, rssi_correction):
     rssi_db = (rssi_hdb >> 1)
     rssi_dbm = rssi_db - rssi_correction
-
-    rssi_dbm = max(rssi_dbm, -128)  # Ensure rssi_dbm is not less than -128
+    rssi_dbm = [max(x, -128)  for x in rssi_dbm] # Ensure rssi_dbm is not less than -128
 
     return rssi_dbm
 
-def display_iq(iq_capture, agc_gain, rssi_hdb):
+def display_iq(iq_capture, agc_gain, rssi):
 
-    rssi=rssi_half_db_to_rssi_dbm(rssi_hdb,rssi_correction_lookup_table(2400))
+
     fig_iq_capture = plt.figure(0)
     fig_iq_capture.clf()
     plt.xlabel("sample")
@@ -57,8 +56,8 @@ def display_iq(iq_capture, agc_gain, rssi_hdb):
     fig_rssi = plt.figure(2)
     fig_rssi.clf()
     plt.xlabel("sample")
-    plt.ylabel("dB")
-    plt.title("RSSI half (calibrated)")
+    plt.ylabel("dBm")
+    plt.title("RSSI  (calibrated)")
     plt.plot(rssi)
     plt.ylim(-100, 10)
     fig_rssi.canvas.flush_events()
@@ -127,8 +126,10 @@ while True:
         np.savetxt(iq_fd, iq)
 
         timestamp, iq_capture, agc_gain, rssi_half_db = parse_iq(iq, iq_len)
-        print(timestamp)
-        display_iq(iq_capture, agc_gain, rssi_half_db)
+        rssi=rssi_half_db_to_rssi_dbm(rssi_half_db,rssi_correction_lookup_table(2400))
+
+        print(timestamp,rssi[-1] )
+        display_iq(iq_capture, agc_gain, rssi)
 
     except KeyboardInterrupt:
         print('User quit')
