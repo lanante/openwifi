@@ -33,7 +33,7 @@ We use the
   # (for smaller FPGA (7Z020), iq_len_init should be <4096, like 4095, instead of 8187)
   ./side_ch_ctl wh11d2000
   ./side_ch_ctl wh8d8
-  ./inject_80211/inject_80211 -d 1000 -r 7 -t d -e 0 -b 5a -n 99999999 -s 20 sdr0
+  ./inject_80211/inject_80211 -d 10000 -r 0 -t d -e 0 -b 5a -n 99999999 -s 1000 sdr0
   ```
 
 - Open another terminal and ssh on the board.
