@@ -94,7 +94,7 @@ MAX_NUM_DMA_SYMBOL = 8192
 
 if len(sys.argv)<2:
     print("Assume iq_len = 8187! (Max UDP 65507 bytes; (65507/8)-1 = 8187)")
-    iq_len = 8187
+    iq_len = 4095
 else:
     iq_len = int(sys.argv[1])
     print(iq_len)
