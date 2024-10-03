@@ -284,7 +284,7 @@ void sigint_callback_handler(int signum)
 
 int main(const int argc, char * const argv[])
 {
-    int action_flag, reg_type, reg_idx, interval_us, s, side_info_size, socket_ok = 1, side_info_count=0;
+    int action_flag, reg_type, reg_idx, interval_us, s, side_info_size, socket_ok = 1;
     unsigned int reg_val, *cmd_buf;
     unsigned short port;
     struct sockaddr_in server;
@@ -356,7 +356,6 @@ int main(const int argc, char * const argv[])
     server.sin_port        = port;               /* Server Port        */
     server.sin_addr.s_addr = inet_addr("192.168.10.1"); /* Server's Address   */
 
-    while(do_exit==false) {
         nlh->nlmsg_len = NLMSG_SPACE(4*4);
         nlh->nlmsg_pid = getpid();
         nlh->nlmsg_flags = 0;
@@ -387,28 +386,11 @@ int main(const int argc, char * const argv[])
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
         // printf("num_dma_symbol %d\n", side_info_size/8);
 
-        if (action_flag!=ACTION_SIDE_INFO_GET) {
-            if (value_only_flag==0)
-                printf("   rx: size %d val %d 0x%08x\n", side_info_size, cmd_buf[0], cmd_buf[0]);
-            else
-                printf("%u\n", cmd_buf[0]);
-            break;
-        }
-        
         if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-            if (sendto(s, cmd_buf, side_info_size, 0, (struct sockaddr *)&server, sizeof(server)) < 0)
-                printf("sendto() error!\n");
-	else
-	    {usleep(interval_us);
-	     printf(" side info count %d\n",  side_info_count);}
-	
-        side_info_count = side_info_count + (side_info_size>4);
-
-
-
-
-    }
-    
+        	printf("1")
+        	else
+        	printf("0")
+        
     close(s);
     close(sock_fd);
     return(ret);
