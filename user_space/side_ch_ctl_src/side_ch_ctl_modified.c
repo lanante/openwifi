@@ -1,4 +1,4 @@
-11/*
+/*
  * openwifi side channel user space program
  * Author: Xianjun Jiao
  * SPDX-FileCopyrightText: 2019 UGent
@@ -143,7 +143,7 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
     para_string_len = strlen(para);
 
     if (para_string_len == 0 || para_string_len>MAX_PARA_STRING_LEN) {
-        printf("Parameter string is too short/long!\n");
+  //      printf("Parameter string is too short/long!\n");
         return(-1);
     }
     
@@ -153,7 +153,7 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
         
         if (para_string_len == 1) { // no explicit input
             (*interval_us) = 100;
-            printf("The default 100ms side info getting period is taken!\n");
+    //        printf("The default 100ms side info getting period is taken!\n");
             return(0);
         }
 
@@ -161,15 +161,15 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
         (*interval_us) = atoi_my(para+1);
         if ( (*interval_us)<0 ) { // for invalid input, we set it to the default 100ms
             (*interval_us) = 100;
-            printf("Invalid side info getting period!\n");
-            printf("The default 100ms side info getting period is taken!\n");
+      //      printf("Invalid side info getting period!\n");
+        //    printf("The default 100ms side info getting period is taken!\n");
         }
         
         return(0);
     }
 
     if (para_string_len == 2) {// this is invalid, for read and write, the length should be > 2
-        printf("Lack of input (register index/value) for read/write action\n");
+       // printf("Lack of input (register index/value) for read/write action\n");
         return(-2);
     }
 
@@ -183,13 +183,13 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
             (*reg_type) = REG_TYPE_SOFTWARE;
         else {
             (*reg_type) = REG_TYPE_INVALID;
-            printf("Invalid register type (s/h is expected)!\n");
+   //         printf("Invalid register type (s/h is expected)!\n");
             return(-3);
         }
 
         (*reg_idx) = atoi_my(para+2);
         if ( (*reg_idx)<0 || (*reg_idx)>31) {
-            printf("Invalid register index (should be 0~31)!\n");
+ //           printf("Invalid register index (should be 0~31)!\n");
             return(-4);
         }
 
@@ -197,7 +197,7 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
     }
 
     if (para_string_len < 5) { // this is invalid, for write, the length should be >= 5. example wh3d9
-        printf("Lack of input (register value/etc) for write action\n");
+   //     printf("Lack of input (register value/etc) for write action\n");
         return(-5);
     }
 
@@ -211,13 +211,13 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
             (*reg_type) = REG_TYPE_SOFTWARE;
         else {
             (*reg_type) = REG_TYPE_INVALID;
-            printf("Invalid register type (s/h is expected)!\n");
+     //       printf("Invalid register type (s/h is expected)!\n");
             return(-6);
         }
 
         num_char_reg_idx = take_reg_idx_string_for_write(para+2);
         if ( num_char_reg_idx<0 ) {
-            printf("Invalid register index input!\n");
+      //      printf("Invalid register index input!\n");
             return(-7);
         }
         
@@ -226,7 +226,7 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
 
         (*reg_idx) = atoi_my(tmp_str);
         if ( (*reg_idx)<0 || (*reg_idx)>31 ) {
-            printf("Invalid register index (should be 0~31)!\n");
+            //printf("Invalid register index (should be 0~31)!\n");
             return(-9);
         }
 
@@ -235,27 +235,27 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
         else if (para[2+num_char_reg_idx] == 'h')// || para[2+num_char_reg_idx] == 'H')
             hex_flag=1;
         else {
-            printf("Invalid hex/decimal flag (d/h is expected)!\n");
+            //printf("Invalid hex/decimal flag (d/h is expected)!\n");
             return(-10);
         }
 
         num_char_reg_val = take_reg_val_string_for_write(para+2+num_char_reg_idx+1);
         if ( num_char_reg_val<0 ) {
-            printf("Invalid register value input!\n");
+            //printf("Invalid register value input!\n");
             return(-11);
         }
 
         if (hex_flag==0) {
             (*reg_val) = atoi_my(tmp_str);
             if ( (*reg_val)<0 ) {
-                printf("Invalid register value input of decimal number!\n");
+        //        printf("Invalid register value input of decimal number!\n");
                 return(-12);
             }
         } else {
             (*reg_val) = hextoi_my(tmp_str);
             // printf("%u %s\n", (*reg_val), tmp_str);
             if ( (*reg_val)<0 ) {
-                printf("Invalid register value input of hex number!\n");
+          //      printf("Invalid register value input of hex number!\n");
                 return(-13);
             }
         }
@@ -300,10 +300,10 @@ int main(const int argc, char * const argv[])
     value_only_flag = (argc>2?1:0);
 
     ret = parse_para_string(argv[1], &action_flag, &reg_type, &reg_idx, &reg_val, &interval_us);
-    if (value_only_flag==0) {
+   /* if (value_only_flag==0) {
         printf("parse: ret %d\n", ret);
         printf("   tx: action_flag %d reg_type %d reg_idx %d reg_val %u interval_us %d\n", action_flag, reg_type, reg_idx, reg_val, interval_us);
-    }
+    }*/
     if (ret<0) {
         printf("Wrong input!\n");
         print_usage();
@@ -387,9 +387,9 @@ int main(const int argc, char * const argv[])
         // printf("num_dma_symbol %d\n", side_info_size/8);
 
         if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-        	printf("1")
+        	printf("1");
         	else
-        	printf("0")
+        	printf("0");
         
     close(s);
     close(sock_fd);
