@@ -20,7 +20,7 @@ SIZE=50 # paload size in bytes
 	for (( j = 0 ; j < ${#RATE[@]} ; j++ )) do
 	ERR_COUNT=0
 	for (( i = 0 ; i < $COUNT ; i++ )) do
-		./inject_80211/inject_80211 -m n -n 1  -r ${RATE[$j]} -s sdr0 > /dev/null
+		./inject_80211/inject_80211 -m n -n 1  -r ${RATE[$j]} -s $SIZE sdr0 > /dev/null
 		output=$(./side_ch_ctl_modified g)
 		ERR_COUNT=$((ERR_COUNT+$output))
 		echo Packet $i of $COUNT : $output

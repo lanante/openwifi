@@ -137,13 +137,13 @@ long int hextoi_my(char *para) {
 // write 0x3db to software register 19: ws19h3db (w--write; s--software; 19--register idx; h--hex;     3db--value 0x3db)
 //           read software register 23: rs23     (r-- read; s--software; 23--register idx)
 //        get csi and equalizer output: g400     (g--  get; 400--every 400ms; no/wrong input means default 100ms)
-int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx, unsigned int *reg_val, int *interval_us) {
+int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx, unsigned int *reg_val, int *interval_ms) {
     int i, para_string_len, num_char_reg_idx, num_char_reg_val, hex_flag;
 
     para_string_len = strlen(para);
 
     if (para_string_len == 0 || para_string_len>MAX_PARA_STRING_LEN) {
-  //      printf("Parameter string is too short/long!\n");
+        printf("Parameter string is too short/long!\n");
         return(-1);
     }
     
@@ -152,24 +152,24 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
         (*action_flag) = ACTION_SIDE_INFO_GET;
         
         if (para_string_len == 1) { // no explicit input
-            (*interval_us) = 100;
-    //        printf("The default 100ms side info getting period is taken!\n");
+            (*interval_ms) = 100;
+            printf("The default 100ms side info getting period is taken!\n");
             return(0);
         }
 
         // there is something input
-        (*interval_us) = atoi_my(para+1);
-        if ( (*interval_us)<0 ) { // for invalid input, we set it to the default 100ms
-            (*interval_us) = 100;
-      //      printf("Invalid side info getting period!\n");
-        //    printf("The default 100ms side info getting period is taken!\n");
+        (*interval_ms) = atoi_my(para+1);
+        if ( (*interval_ms)<0 ) { // for invalid input, we set it to the default 100ms
+            (*interval_ms) = 100;
+            printf("Invalid side info getting period!\n");
+            printf("The default 100ms side info getting period is taken!\n");
         }
         
         return(0);
     }
 
     if (para_string_len == 2) {// this is invalid, for read and write, the length should be > 2
-       // printf("Lack of input (register index/value) for read/write action\n");
+        printf("Lack of input (register index/value) for read/write action\n");
         return(-2);
     }
 
@@ -183,13 +183,13 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
             (*reg_type) = REG_TYPE_SOFTWARE;
         else {
             (*reg_type) = REG_TYPE_INVALID;
-   //         printf("Invalid register type (s/h is expected)!\n");
+            printf("Invalid register type (s/h is expected)!\n");
             return(-3);
         }
 
         (*reg_idx) = atoi_my(para+2);
         if ( (*reg_idx)<0 || (*reg_idx)>31) {
- //           printf("Invalid register index (should be 0~31)!\n");
+            printf("Invalid register index (should be 0~31)!\n");
             return(-4);
         }
 
@@ -197,7 +197,7 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
     }
 
     if (para_string_len < 5) { // this is invalid, for write, the length should be >= 5. example wh3d9
-   //     printf("Lack of input (register value/etc) for write action\n");
+        printf("Lack of input (register value/etc) for write action\n");
         return(-5);
     }
 
@@ -211,13 +211,13 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
             (*reg_type) = REG_TYPE_SOFTWARE;
         else {
             (*reg_type) = REG_TYPE_INVALID;
-     //       printf("Invalid register type (s/h is expected)!\n");
+            printf("Invalid register type (s/h is expected)!\n");
             return(-6);
         }
 
         num_char_reg_idx = take_reg_idx_string_for_write(para+2);
         if ( num_char_reg_idx<0 ) {
-      //      printf("Invalid register index input!\n");
+            printf("Invalid register index input!\n");
             return(-7);
         }
         
@@ -226,7 +226,7 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
 
         (*reg_idx) = atoi_my(tmp_str);
         if ( (*reg_idx)<0 || (*reg_idx)>31 ) {
-            //printf("Invalid register index (should be 0~31)!\n");
+            printf("Invalid register index (should be 0~31)!\n");
             return(-9);
         }
 
@@ -235,27 +235,27 @@ int parse_para_string(char *para, int *action_flag, int *reg_type, int *reg_idx,
         else if (para[2+num_char_reg_idx] == 'h')// || para[2+num_char_reg_idx] == 'H')
             hex_flag=1;
         else {
-            //printf("Invalid hex/decimal flag (d/h is expected)!\n");
+            printf("Invalid hex/decimal flag (d/h is expected)!\n");
             return(-10);
         }
 
         num_char_reg_val = take_reg_val_string_for_write(para+2+num_char_reg_idx+1);
         if ( num_char_reg_val<0 ) {
-            //printf("Invalid register value input!\n");
+            printf("Invalid register value input!\n");
             return(-11);
         }
 
         if (hex_flag==0) {
             (*reg_val) = atoi_my(tmp_str);
             if ( (*reg_val)<0 ) {
-        //        printf("Invalid register value input of decimal number!\n");
+                printf("Invalid register value input of decimal number!\n");
                 return(-12);
             }
         } else {
             (*reg_val) = hextoi_my(tmp_str);
             // printf("%u %s\n", (*reg_val), tmp_str);
             if ( (*reg_val)<0 ) {
-          //      printf("Invalid register value input of hex number!\n");
+                printf("Invalid register value input of hex number!\n");
                 return(-13);
             }
         }
@@ -284,7 +284,7 @@ void sigint_callback_handler(int signum)
 
 int main(const int argc, char * const argv[])
 {
-    int action_flag, reg_type, reg_idx, interval_us, s, side_info_size, socket_ok = 1;
+    int action_flag, reg_type, reg_idx, interval_ms, s, side_info_size, socket_ok = 1, loop_count=0, side_info_count=0;
     unsigned int reg_val, *cmd_buf;
     unsigned short port;
     struct sockaddr_in server;
@@ -299,11 +299,11 @@ int main(const int argc, char * const argv[])
 
     value_only_flag = (argc>2?1:0);
 
-    ret = parse_para_string(argv[1], &action_flag, &reg_type, &reg_idx, &reg_val, &interval_us);
-   /* if (value_only_flag==0) {
+    ret = parse_para_string(argv[1], &action_flag, &reg_type, &reg_idx, &reg_val, &interval_ms);
+    if (value_only_flag==0) {
         printf("parse: ret %d\n", ret);
-        printf("   tx: action_flag %d reg_type %d reg_idx %d reg_val %u interval_us %d\n", action_flag, reg_type, reg_idx, reg_val, interval_us);
-    }*/
+        printf("   tx: action_flag %d reg_type %d reg_idx %d reg_val %u interval_ms %d\n", action_flag, reg_type, reg_idx, reg_val, interval_ms);
+    }
     if (ret<0) {
         printf("Wrong input!\n");
         print_usage();
@@ -356,6 +356,7 @@ int main(const int argc, char * const argv[])
     server.sin_port        = port;               /* Server Port        */
     server.sin_addr.s_addr = inet_addr("192.168.10.1"); /* Server's Address   */
 
+   // while(do_exit==false) {
         nlh->nlmsg_len = NLMSG_SPACE(4*4);
         nlh->nlmsg_pid = getpid();
         nlh->nlmsg_flags = 0;
@@ -386,11 +387,26 @@ int main(const int argc, char * const argv[])
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
         // printf("num_dma_symbol %d\n", side_info_size/8);
 
-        if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-        	printf("1");
-        	else
-        	printf("0");
+        if (action_flag!=ACTION_SIDE_INFO_GET) {
+            if (value_only_flag==0)
+                printf("   rx: size %d val %d 0x%08x\n", side_info_size, cmd_buf[0], cmd_buf[0]);
+            else
+                printf("%u\n", cmd_buf[0]);
+            break;
+        }
         
+        if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
+            if (sendto(s, cmd_buf, side_info_size, 0, (struct sockaddr *)&server, sizeof(server)) < 0)
+                printf("sendto() error!\n");
+
+    //    side_info_count = side_info_count + (side_info_size>4);
+     //   loop_count++;
+    //    if ((loop_count%64) == 0)
+     //       printf("loop %d side info count %d\n", loop_count, side_info_count);
+
+     //   usleep(interval_ms*1000);
+   // }
+    
     close(s);
     close(sock_fd);
     return(ret);

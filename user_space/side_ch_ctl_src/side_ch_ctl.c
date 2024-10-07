@@ -1,4 +1,4 @@
-11/*
+/*
  * openwifi side channel user space program
  * Author: Xianjun Jiao
  * SPDX-FileCopyrightText: 2019 UGent
