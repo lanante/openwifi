@@ -8,3 +8,4 @@ cd /root/openwifi
 ./sdrctl dev sdr0 set reg xpu 1 1
 insmod side_ch.ko iq_len_init=4095
  
+rm result_perf_lite.csv
