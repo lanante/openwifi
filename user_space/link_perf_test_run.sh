@@ -18,12 +18,9 @@ SIZE=50 # paload size in bytes
 
 
 	for (( j = 0 ; j < ${#RATE[@]} ; j++ )) do
-	ERR_COUNT=0
 	for (( i = 0 ; i < $COUNT ; i++ )) do
 		./inject_80211/inject_80211 -m n -n 1  -r ${RATE[$j]} -s $SIZE sdr0 > /dev/null
-		output=$(./side_ch_ctl_modified g)
-		ERR_COUNT=$((ERR_COUNT+$output))
-		echo Packet $i of $COUNT : $output
+		./side_ch_ctl_modified g > /dev/null
+		echo Packet $i of $COUNT for MCS ${RATE[$j]} 
 	done
-	    printf "Packet Error for  ${RATE[$j]} = %.2f\n"  $(bc <<<"scale=4;1-$ERR_COUNT/$COUNT")
 	done

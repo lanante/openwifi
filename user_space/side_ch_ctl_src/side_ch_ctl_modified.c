@@ -395,16 +395,16 @@ int main(const int argc, char * const argv[])
             break;
         }
         
-        if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
+        if (socket_ok)// && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
             if (sendto(s, cmd_buf, side_info_size, 0, (struct sockaddr *)&server, sizeof(server)) < 0)
                 printf("sendto() error!\n");
 
-    //    side_info_count = side_info_count + (side_info_size>4);
+   //     side_info_count = side_info_count + (side_info_size>4);
      //   loop_count++;
     //    if ((loop_count%64) == 0)
      //       printf("loop %d side info count %d\n", loop_count, side_info_count);
 
-     //   usleep(interval_ms*1000);
+    //    usleep(interval_ms*1000);
    // }
     
     close(s);
