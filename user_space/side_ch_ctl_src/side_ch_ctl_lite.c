@@ -356,6 +356,9 @@ int main(const int argc, char * const argv[])
     server.sin_port        = port;               /* Server Port        */
     server.sin_addr.s_addr = inet_addr("192.168.10.1"); /* Server's Address   */
 
+    int succCount=0;
+    int maxCount=100;
+	for (i=0;i<maxCount;i++) {
         nlh->nlmsg_len = NLMSG_SPACE(4*4);
         nlh->nlmsg_pid = getpid();
         nlh->nlmsg_flags = 0;
@@ -387,9 +390,9 @@ int main(const int argc, char * const argv[])
         // printf("num_dma_symbol %d\n", side_info_size/8);
 
         if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-        	printf("1");
-        	else
-        	printf("0");
+        	succCount++;
+        }
+        printf("%d",succCount);
         
     close(s);
     close(sock_fd);
