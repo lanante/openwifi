@@ -11,9 +11,9 @@
 
 
 #Start transmit
-BATCH_COUNT=100
+BATCH_COUNT=10
 COUNT=1
-RATE=( 0 1 2 3 4 7)
+RATE=( 0 4 7)
 SIZE=128 # paload size in bytes
 BO=(0 2 4 6 8 10 12 14 16 18 20)
 
@@ -43,17 +43,24 @@ echo ${OUT}  >> result_perf_lite.csv
 				for (( i = 0 ; i < $BATCH_COUNT ; i++ )) do
 					./inject_80211/inject_80211 -m n -n $COUNT  -r ${RATE[$j]} -s $SIZE sdr0 > /dev/null
 					output=$(./side_ch_ctl_lite g)
+					if [[ $output == 0 ]]; then
+						outputString="Failed"
+					elif [[ $output == $COUNT ]]; then
+						outputString="Success"
+					else
+						outputString="Some Success"
+					fi
 					SUCC=$((SUCC+$output))
-					output=1
-					echo Power BO = ${BO[$k]} : RATE = ${RATE[$j]} : Packet $i of $COUNT : Result = $output
+					echo Power BO = ${BO[$k]} : RATE = ${RATE[$j]} : Packet $i of $BATCH_COUNT : Result = $outputString
 				done
 				  if [[ $((j+1)) == ${#RATE[@]} ]]; then
-    					OUT="$OUT$(bc <<<"scale=4;1-$SUCC/$COUNT")"
+    					OUT="$OUT$(bc <<<"scale=4;1-$SUCC/$COUNT/$BATCH_COUNT")"
  				  else
-  					OUT="$OUT,$(bc <<<"scale=4;1-$SUCC/$COUNT")"
+  					OUT="$OUT,$(bc <<<"scale=4;1-$SUCC/$COUNT/$BATCH_COUNT")"
   				  fi
 
 			done
-				echo $OUT,$(bc <<<"scale=4;1-$SUCC/$COUNT")>> result_perf_lite.csv
+			printf "\n"
+			echo $OUT,$(bc <<<"scale=4;1-$SUCC/$COUNT/$BATCH_COUNT")>> result_perf_lite.csv
 	done
 

@@ -357,8 +357,7 @@ int main(const int argc, char * const argv[])
     server.sin_addr.s_addr = inet_addr("192.168.10.1"); /* Server's Address   */
 
     int succCount=0;
-    int maxCount=100;
-	for (i=0;i<maxCount;i++) {
+    int maxCount=10;
         nlh->nlmsg_len = NLMSG_SPACE(4*4);
         nlh->nlmsg_pid = getpid();
         nlh->nlmsg_flags = 0;
@@ -382,12 +381,14 @@ int main(const int argc, char * const argv[])
 
         nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD);
         iov.iov_len = nlh->nlmsg_len;
-        /* Read message from kernel */
+       
+	for (int i=0;i<maxCount;i++) {
+       	/* Read message from kernel */
         recvmsg(sock_fd, &msg, 0);
-        // printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
+        //printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
 
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
-        // printf("num_dma_symbol %d\n", side_info_size/8);
+      //   printf("num_dma_symbol %d\n", side_info_size/8);
 
         if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
         	succCount++;
