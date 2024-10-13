@@ -392,10 +392,9 @@ int main(const int argc, char * const argv[])
 
         if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
         	succCount++;
-        usleep(10000);
         }
         printf("%d",succCount);
-     
+        
     close(s);
     close(sock_fd);
     return(ret);

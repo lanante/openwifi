@@ -15,7 +15,7 @@ BATCH_COUNT=10
 COUNT=1
 RATE=( 0 4 7)
 SIZE=128 # paload size in bytes
-BO=(0 2 4 6 8 10 12 14 16 18 20)
+BO=(20 18 16 14 12 10 8 6 4 2 0)
 
 
 
@@ -41,7 +41,7 @@ echo ${OUT}  >> result_perf_lite.csv
 		 		./sdrctl dev sdr0 set reg rf 0 $((${BO[$k]}*1000)) > /dev/null
 				SUCC=0
 				for (( i = 0 ; i < $BATCH_COUNT ; i++ )) do
-					./inject_80211/inject_80211 -m n -n $COUNT  -r ${RATE[$j]} -s $SIZE sdr0 > /dev/null
+					./inject_80211/inject_80211 -m n -d 10000 -n $COUNT  -r ${RATE[$j]} -s $SIZE sdr0 > /dev/null
 					output=$(./side_ch_ctl_lite g)
 					if [[ $output == 0 ]]; then
 						outputString="Failed"
