@@ -3,13 +3,12 @@ import matplotlib.pyplot as plt
 
 file = 'result_perf_lite.csv'
 
-df = pandas.read_csv(file)
+df = pandas.read_csv(file,index_col='Power Backoff')
 
-df1 = df.iloc[::-1]
-# plot prices
-plt.semilogy(df1['Power Backoff'], df['MCS0'], '-', label = 'MCS0')
-plt.semilogy(df1['Power Backoff'], df['MCS4'], '-', label = 'MCS4')
-plt.semilogy(df1['Power Backoff'], df['MCS7'], '-', label = 'MCS7')
-plt.legend()
+df = df.T
+for i, col in enumerate(df.columns):
+    df[col].plot(legend=True)
 
 plt.show()
+
+
