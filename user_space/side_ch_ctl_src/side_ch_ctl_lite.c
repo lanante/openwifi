@@ -382,15 +382,21 @@ int main(const int argc, char * const argv[])
        
        	/* Read message from kernel */
         recvmsg(sock_fd, &msg, 0);
-        //printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
-
+    //    printf("Received message payload: %d\n", &cmd_buf[0]);
+    
+   
+    for (int i=0; i<10; i++) {
+        printf("%02hhX ", cmd_buf[i]);
+    }
+    
+    
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
-      //   printf("num_dma_symbol %d\n", side_info_size/8);
+         printf("num_dma_symbol %d\n", side_info_size/8);
 
         if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-        	printf("0");
+        	printf("0 \n");
 	else
-		printf("1");
+		printf("1 \n");
      
     close(s);
     close(sock_fd);

@@ -36,7 +36,7 @@ echo ${OUT}  >> result_perf_lite.csv
 				if [[ $PREV_ERR != 0 ]]; then
 					for (( i = 1 ; i <= $COUNT ; i++ )) do
 						./inject_80211/inject_80211 -m n -d 0 -n 1 -r ${RATE[$j-1]} -s $SIZE sdr0 > /dev/null
-						output=$(./side_ch_ctl_lite g)
+						output=$(./side_ch_ctl_src/side_ch_ctl_lite g)
 						if [[ $output == 0 ]]; then
 							outputString="Success"
 						else
