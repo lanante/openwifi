@@ -384,6 +384,10 @@ int main(const int argc, char * const argv[])
         recvmsg(sock_fd, &msg, 0);
         // printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
 
+    for (int i=0; i<10; i++) {
+        printf("%02hhX ", cmd_buf[i]);
+    }
+
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
         // printf("num_dma_symbol %d\n", side_info_size/8);
 

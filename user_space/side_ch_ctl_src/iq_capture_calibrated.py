@@ -7,7 +7,8 @@ import sys
 import socket
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib
+matplotlib.use('GTK3Agg')
 
 def rssi_correction_lookup_table(freq_mhz):
     if freq_mhz < 2412 or freq_mhz <= 2484 or freq_mhz < 5160:
@@ -61,6 +62,7 @@ def display_iq(iq_capture, agc_gain, rssi):
     plt.plot(rssi)
     plt.ylim(-100, 10)
     fig_rssi.canvas.flush_events()
+
 
 def parse_iq(iq, iq_len):
     # print(len(iq), iq_len)
@@ -118,7 +120,7 @@ while True:
         data, addr = sock.recvfrom(MAX_NUM_DMA_SYMBOL*8) # buffer size
         # print(addr)
         test_residual = len(data)%num_byte_per_trans
-        # print(len(data)/8, num_dma_symbol_per_trans, test_residual)
+        print(len(data)/8, num_dma_symbol_per_trans, test_residual)
         if (test_residual != 0):
             print("Abnormal length")
 
@@ -128,9 +130,12 @@ while True:
         timestamp, iq_capture, agc_gain, rssi_half_db = parse_iq(iq, iq_len)
         rssi=rssi_half_db_to_rssi_dbm(rssi_half_db,rssi_correction_lookup_table(2400))
 
-        print(timestamp,rssi[-1] )
-        display_iq(iq_capture, agc_gain, rssi)
+        print(timestamp,rssi[0],rssi_half_db )
+        print(data[:20])
 
+        display_iq(iq_capture, agc_gain, rssi)
+        plt.show()
+        
     except KeyboardInterrupt:
         print('User quit')
         break

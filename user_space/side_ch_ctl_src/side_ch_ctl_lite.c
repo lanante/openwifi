@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -281,6 +282,32 @@ void sigint_callback_handler(int signum)
 	fprintf(stdout, "Caught signal %d\n", signum);
 	do_exit = true;
 }
+void slice_to_16bit(uint32_t value, uint16_t *high, uint16_t *low) {
+    *high = (uint16_t)(value >> 16);
+    *low = (uint16_t)value;
+}
+int rssi_correction_lookup_table(int freq_mhz) {
+    if (freq_mhz < 2412 || freq_mhz <= 2484 || freq_mhz < 5160) {
+        return 153;
+    } else {
+        return 145;
+    }
+}
+
+int rssi_half_db_to_rssi_dbm(int rssi_hdb, int rssi_correction) {
+    // Right shift by 1 to divide by 2
+    int rssi_db = (rssi_hdb >> 1);
+    
+    // Calculate dBm value
+    int rssi_dbm = rssi_db - rssi_correction;
+
+    // Ensure rssi_dbm is not less than -128
+    if (rssi_dbm < -128) {
+        rssi_dbm = -128;
+    }
+
+    return rssi_dbm;
+}
 
 int main(const int argc, char * const argv[])
 {
@@ -384,17 +411,31 @@ int main(const int argc, char * const argv[])
         recvmsg(sock_fd, &msg, 0);
     //    printf("Received message payload: %d\n", &cmd_buf[0]);
     
-   
+       uint16_t gain,rssi_half_db,high,low;
+	int rssi;
+
+
+
+
+/*
+
     for (int i=0; i<10; i++) {
-        printf("%02hhX ", cmd_buf[i]);
+        printf("%u ", cmd_buf[i]);
+            slice_to_16bit(cmd_buf[i], &high, &low);
+            
+    printf("%d Original: %d\n",i, cmd_buf[i]);
+    printf("High: %d\n", high);
+    printf("Low: %d\n", low);
     }
-    
+   
+   */
+    slice_to_16bit(cmd_buf[3], &rssi_half_db, &gain);
+    rssi=rssi_half_db_to_rssi_dbm(rssi_half_db,rssi_correction_lookup_table(2400));
     
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
-         printf("num_dma_symbol %d\n", side_info_size/8);
 
-        if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-        	printf("0 \n");
+   if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
+        	printf("0 %d \n",rssi);
 	else
 		printf("1 \n");
      
