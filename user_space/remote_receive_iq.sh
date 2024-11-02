@@ -10,7 +10,7 @@ cd openwifi/side_ch_ctl_src
 
 ./side_ch_ctl wh8d1
 # checksum pass= 1,  receiver gives SIGNAL field checksum result. pass = 4,  receiver gives long preamble detected=8, 
-./side_ch_ctl_lite g0
+./side_ch_ctl_rssi g0
 
 
 ENDSSH

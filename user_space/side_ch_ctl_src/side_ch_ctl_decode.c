@@ -411,33 +411,13 @@ int main(const int argc, char * const argv[])
         recvmsg(sock_fd, &msg, 0);
     //    printf("Received message payload: %d\n", &cmd_buf[0]);
     
-       uint16_t gain,rssi_half_db,high,low;
-	int rssi;
 
-
-
-
-/*
-
-    for (int i=0; i<10; i++) {
-        printf("%u ", cmd_buf[i]);
-            slice_to_16bit(cmd_buf[i], &high, &low);
-            
-    printf("%d Original: %d\n",i, cmd_buf[i]);
-    printf("High: %d\n", high);
-    printf("Low: %d\n", low);
-    }
-   
-   */
-    slice_to_16bit(cmd_buf[3], &rssi_half_db, &gain);
-    rssi=rssi_half_db_to_rssi_dbm(rssi_half_db,rssi_correction_lookup_table(2400));
-    
         side_info_size = nlh->nlmsg_len-NLMSG_HDRLEN;
 
    if (socket_ok && (side_info_size >= ((CSI_LEN+0*EQUALIZER_LEN+HEADER_LEN)*8)))
-        	printf("0 %d \n",rssi);
+        	printf("0");
 	else
-		printf("1 \n");
+		printf("1");
      
     close(s);
     close(sock_fd);
